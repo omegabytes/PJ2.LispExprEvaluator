@@ -1,0 +1,29 @@
+CSC220 Programming Project #2
+=============================
+
+Due Date: 23:55pm, Wednesday, 4/2/2014, upload LispExprEvaluator.java to ilearn
+
+- You need to implement LispExprEvaluator.java which uses Java API Stack
+  See project requirements in LispExprEvaluator.java
+
+- Use TestLispExprEvaluator.java to test correctness of your program
+
+- Compile programs (you are in directory containing Readme file):
+
+  javac PJ2/*.java
+  javac *.java
+
+- Run programs (you are in directory containing Readme file):
+
+  // Run main() method tests in LispExprEvaluator class
+  java PJ2.LispExprEvaluator
+
+  // Run main test program
+  java TestLispExprEvaluator
+
+- Bonus (20%): Implement GUI test program
+
+  Talk to me before you start this part.
+
+
+
