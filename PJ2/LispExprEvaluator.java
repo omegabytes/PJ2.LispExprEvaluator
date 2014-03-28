@@ -128,11 +128,6 @@ public class LispExprEvaluator
 
     }
 
-
-    private static boolean isNumeric(String str)
-    {
-        return str.matches("^\\d+$");  //matches any integer
-    }
     // This function evaluates current operator with its operands
     // See complete algorithm in evaluate()
     //
@@ -158,9 +153,9 @@ public class LispExprEvaluator
           double value = Double.parseDouble((String) operand);
           thisOpStack.push(value);
 
-        if(thisExprStack.isEmpty() ){
-          throw new LispExprException("No operator");
-        }
+          if(thisExprStack.isEmpty() ){
+            throw new LispExprException("No operator");
+          }
           operand = thisExprStack.pop();
         }
 
@@ -286,6 +281,7 @@ public class LispExprEvaluator
             }
             else
             {
+              try{
                 // Get next token, only one char in string token
                 String aToken = inputExprScanner.next();
                 //System.out.println("Other: " + aToken);
@@ -318,6 +314,12 @@ public class LispExprEvaluator
                   default:
                     throw new LispExprException(item + " is not a legal expression operator");
                 } // end switch
+              }//end try
+              catch ( LispExprException e){
+                System.out.println("LispExprException: " + e.getMessage());
+                System.out.println("exiting...");
+                System.exit(1);
+              }//end catch
             } // end else
         } // end while
 
@@ -345,8 +347,8 @@ public class LispExprEvaluator
         result = expr.evaluate();
         System.out.printf("Evaluated result : %.2f\n", result);
         System.out.println("-----------------------------");
-
-    }
+        
+      }
 
     // define few test cases, exception may happen
     public static void main (String args[])
