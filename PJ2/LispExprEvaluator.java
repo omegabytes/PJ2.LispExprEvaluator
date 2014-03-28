@@ -149,29 +149,32 @@ public class LispExprEvaluator
       double result;
       Object operand;
         //otherwise we exit this method and perform the operator on the operands
+        if(thisExprStack.isEmpty() ){
+          throw new LispExprException("Nothing to evaluate");
+        }
+
         operand = thisExprStack.pop();
         while ( operand instanceof String ) {
           double value = Double.parseDouble((String) operand);
           thisOpStack.push(value);
-          System.out.println(operand);
+
+        if(thisExprStack.isEmpty() ){
+          throw new LispExprException("No operator");
+        }
           operand = thisExprStack.pop();
         }
 
         String aToken = operand.toString() ;
-        System.out.println("Other: " + aToken);
         char item = aToken.charAt(0);
         switch (item) {
           case '+':
 
-            System.out.println("got this far in + sign");
-            result=0;
+            result = 0;
 
             while ( !thisOpStack.isEmpty() ) {
               result = result + thisOpStack.pop();
-            System.out.println(result);
             }
-            thisExprStack.push(result + ""); // recall that thisOpStack is a Stack of doubles
-
+            thisExprStack.push(String.valueOf(result)); // recall that thisOpStack is a Stack of doubles
             break;
 
           case '-':
@@ -185,18 +188,47 @@ public class LispExprEvaluator
 
             if (thisOpStack.isEmpty()) {
               result = -result;
-              thisExprStack.push(result);
+              thisExprStack.push(String.valueOf(result));
             }
             else {
+              //case 2: there are many numbers
               while(!thisOpStack.isEmpty()) {
                 result = result - thisOpStack.pop();
               }
-                thisExprStack.push(result);
+                thisExprStack.push(String.valueOf(result));
             }
+            break;
 
             //case 2; there are many numbers
           case '*':
+
+            result = 1;
+
+            while ( !thisOpStack.isEmpty() ) {
+              result = result * thisOpStack.pop();
+            }
+            thisExprStack.push(String.valueOf(result)); // recall that thisOpStack is a Stack of doubles
+            break;
+
           case '/':
+            
+            result = 1;
+
+            result = thisOpStack.pop();
+
+            if (thisOpStack.isEmpty()) {
+              result = 1/result;
+              thisExprStack.push(String.valueOf(result));
+            }
+            else {
+              //case 2: there are many numbers
+              while(!thisOpStack.isEmpty()) {
+                result = result / thisOpStack.pop();
+              }
+                thisExprStack.push(String.valueOf(result));
+            }
+            break;
+
           case '(':
           default:
             throw new LispExprException(item + " is not a legal expression operator");
@@ -249,8 +281,6 @@ public class LispExprEvaluator
                 String dataString = inputExprScanner.findInLine("\\d+");
 
                 thisExprStack.push(dataString); // TDD
-
-                //System.out.println(dataString);
 
    		// more ...
             }
@@ -322,20 +352,18 @@ public class LispExprEvaluator
     public static void main (String args[])
     {
         LispExprEvaluator expr= new LispExprEvaluator();
-        String test0 = "(+ 1 20 3 )";
-        // String test1 = "(+ (- 6) (* 2 3 4) (/ (+ 3) (* 1) (- 2 3 1)) (+))";
-        // String test2 = "(+ (- 632) (* 21 3 4) (/ (+ 32) (* 1) (- 21 3 1)) (+))";
-        // String test3 = "(+ (/ 2) (* 2) (/ (+ 1) (+ 1) (- 2 1 ))(*))";
-        // String test4 = "(+ (/2)(+))";
-        // String test5 = "(+ (/2 3 0))";
-        // String test6 = "(+ (/ 2) (* 2) (/ (+ 1) (+ 3) (- 2 1 ))))";
-	// evaluateExprTest(test1, expr, "16.50");
-	evaluateExprTest(test0, expr, "6");
-	// evaluateExprTest(test2, expr, "-378.12");
-	// evaluateExprTest(test3, expr, "4.50");
-	// evaluateExprTest(test4, expr, "0.50");
-        // evaluateExprTest(test5, expr, "Infinity or LispExprException");
-        // evaluateExprTest(test6, expr, "LispExprException");
+        String test1 = "(+ (- 6) (* 2 3 4) (/ (+ 3) (* 1) (- 2 3 1)) (+))";
+        String test2 = "(+ (- 632) (* 21 3 4) (/ (+ 32) (* 1) (- 21 3 1)) (+))";
+        String test3 = "(+ (/ 2) (* 2) (/ (+ 1) (+ 1) (- 2 1 ))(*))";
+        String test4 = "(+ (/2)(+))";
+        String test5 = "(+ (/2 3 0))";
+        String test6 = "(+ (/ 2) (* 2) (/ (+ 1) (+ 3) (- 2 1 ))))";
+        evaluateExprTest(test1, expr, "16.50");
+        evaluateExprTest(test2, expr, "-378.12");
+        evaluateExprTest(test3, expr, "4.50");
+        evaluateExprTest(test4, expr, "0.50");
+        evaluateExprTest(test5, expr, "Infinity or LispExprException");
+        evaluateExprTest(test6, expr, "LispExprException");
     }
 }
 
